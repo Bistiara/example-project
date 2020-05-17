@@ -1,0 +1,50 @@
+version: '3.5'
+
+services:
+  web:
+    build:
+      context: '.'
+      args:
+        uid: ${UID}
+    ports:
+      - 8080:80
+    environment:
+      - APACHE_RUN_USER=#1000
+      - APACHE_RUN_GROUP=#1000
+    volumes:
+      - .:/var/www/html
+    networks:
+      backend:
+        aliases:
+          - app
+
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - ./docker-data/db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    networks:
+      backend:
+        aliases:
+          - mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.0.2
+    links:
+      - mysql:mysql
+    ports:
+      - 9191:80
+    environment:
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: 1234
+      PMA_HOST: mysql
+    networks:
+      backend:
+        aliases:
+          - phpmyadmin
+networks:
+  backend:
+    name: backend-network
