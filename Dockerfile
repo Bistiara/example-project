@@ -1,6 +1,5 @@
 FROM php:7.3-apache
 
-
 #Установили дев пакеты  и очистили  apt кеш.
 RUN apt-get update && apt-get install -y \
     curl \
@@ -18,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     zlib1g-dev \
     libzip-dev \
+    libpq-dev \
  && rm -rf /var/lib/apt/lists/*
 
 # 2. Конфигурируем апач .
@@ -40,6 +40,8 @@ RUN docker-php-ext-install \
     mbstring \
     opcache \
     pdo_mysql \
+    pdo \
+    pdo_pgsql \
     zip
 
 # 4. Установка composer.

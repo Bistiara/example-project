@@ -17,7 +17,6 @@ services:
       backend:
         aliases:
           - app
-
   mysql:
     image: mysql:5.7
     volumes:
@@ -45,6 +44,40 @@ services:
       backend:
         aliases:
           - phpmyadmin
+  postgres:
+    image: postgres:11.1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+      POSTGRES_DB: ${DB_DATABASE}
+    volumes:
+      - ./docker-data/postgres:/data/postgres
+    ports:
+      - "127.0.0.1:5432:5432"
+    restart: unless-stopped
+    networks:
+      backend:
+        aliases:
+          - postgres
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 6080:8080
+    networks:
+      backend:
+        aliases:
+          - adminer
+
+  redis:
+    image: redis
+    ports:
+      - "6378:6379"
+    networks:
+      backend:
+        aliases:
+          - redis
 networks:
   backend:
     name: backend-network
